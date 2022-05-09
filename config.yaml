@@ -1,0 +1,75 @@
+http:
+  debug_endpoints: true
+logger:
+  level: INFO
+input:
+  label: "mqtt_input"
+  mqtt:
+    urls:
+      - tcp://${MQTT_URL}
+    topics:
+      - ${LC_USER}/incoming_chat
+    qos: 1
+    client_id: ${LC_USER}
+    user: ${LC_USER}
+    password: "${LC_PASSWORD}"
+    connect_timeout: 30s
+
+pipeline:
+  processors:
+    - log:
+        level: INFO
+        message: "Starting processor"
+    - bloblang: |
+        let name = this.payload.chat.thread.events.0.fields.0.value.split(" ")
+        firstName = $name.slice(0, 1).join("")
+        lastName = $name.slice(1).join(" ")
+
+        email = this.payload.chat.thread.events.0.fields.1.value
+    - log:
+        level: INFO
+        message: "[MidProcess] ${!this}"
+    - branch:
+        processors:
+          - http:
+              url: 'https://api.capsulecrm.com/api/v2/parties/search?q=${! json("email")}'
+              verb: GET
+              headers:
+                Content-Type: application/json
+                Authorization: "Bearer ${CAPSULE_API_TOKEN}"
+              timeout: 5s
+        result_map: |
+          userExists = this.parties.length()
+    - log:
+        level: INFO
+        message: "[SubRequest response] ${!this}"
+    - bloblang: |
+        root = if this.userExists > 0 {
+          deleted()
+        }
+    - bloblang: |
+        party = {
+          "type": "person",
+          "firstName": this.firstName,
+          "lastName": this.lastName,
+          "emailAddresses": [{
+            "type": "Work",
+            "address": this.email
+          }],
+          "tags": [{
+            "name": "Lead"
+          }]
+        }
+    - log:
+        level: INFO
+        message: "[PostProcess] ${this}"
+
+output:
+  label: "capsule_crm_output"
+  http_client:
+    url: https://api.capsulecrm.com/api/v2/parties
+    verb: POST
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer ${CAPSULE_API_TOKEN}"
+    timeout: 5s
