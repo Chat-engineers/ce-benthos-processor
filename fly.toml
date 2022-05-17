@@ -1,0 +1,13 @@
+# fly.toml file generated for ce-streams-processor on 2022-05-17T17:11:06+03:00
+
+app = "ce-streams-processor"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[metrics]
+port = 4195
+path = "/metrics"
+
+[experimental]
+auto_rollback = true
