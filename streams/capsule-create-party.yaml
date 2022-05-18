@@ -1,15 +1,5 @@
 input:
-  label: "mqtt_input"
-  mqtt:
-    urls:
-      - tcp://${MQTT_URL}
-    topics:
-      - ${LC_USER}/incoming_chat
-    qos: 2
-    client_id: ce-benthos-processor
-    dynamic_client_id_suffix: nanoid
-    user: ${LC_USER}
-    password: "${LC_PASSWORD}"
+  resource: skirthooks
 
 pipeline:
   processors:
