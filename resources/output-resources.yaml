@@ -1,0 +1,5 @@
+output_resources:
+  - label: discord_notifications
+    discord:
+      channel_id: ${DISCORD_NOTIFICATIONS_CHANNEL}
+      bot_token: ${DISCORD_BOT_TOKEN}

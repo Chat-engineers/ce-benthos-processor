@@ -1,0 +1,28 @@
+input:
+  resource: skirthooks
+
+pipeline:
+  processors:
+    - bloblang: |
+        root = if action != "incoming_chat" {
+          deleted()
+        }
+
+    - bloblang: |
+        root.content = "Hey @everyone! Someone engaged to a chat on our website. Take a look!"
+        root.components = [
+          {
+            "type": 1,
+            "components": [
+              {
+                "label": "Open chat",
+                "type": 2,
+                "style": 5,
+                "url": "https://my.livechatinc.com/chats/" + this.payload.chat.id + "/" + this.payload.chat.thread.id
+              }
+            ]
+          }
+        ]
+
+output:
+  resource: discord_notifications
