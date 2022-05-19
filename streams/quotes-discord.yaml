@@ -1,0 +1,15 @@
+input:
+  resource: daily_morning
+
+output:
+  resource: discord_notifications
+
+pipeline:
+  processors:
+    - http:
+        url: https://quotes.rest/qod
+        verb: GET
+        headers:
+          Content-Type: application/json
+    - bloblang: |
+        content = "Remember boys!\n" + this.contents.quotes.0.quote + "\n-- " + "_" + this.contents.quotes.0.author + "_"

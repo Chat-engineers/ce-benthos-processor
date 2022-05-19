@@ -4,6 +4,10 @@ input:
 pipeline:
   processors:
     - bloblang: |
+        root = if action != "incoming_chat" {
+          deleted()
+        }
+    - bloblang: |
         let name = this.payload.chat.thread.events.0.fields.0.value.split(" ")
         firstName = $name.slice(0, 1).join("")
         lastName = $name.slice(1).join(" ")
