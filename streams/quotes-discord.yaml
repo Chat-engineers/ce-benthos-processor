@@ -11,7 +11,5 @@ pipeline:
         verb: GET
         headers:
           Content-Type: application/json
-    - log:
-        message: ${ this }
     - bloblang: |
         content = "Remember boys!\n" + this.contents.quotes.0.quote + " -- " + "_" + this.contents.quotes.0.author + "_"
