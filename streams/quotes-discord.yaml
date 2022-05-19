@@ -12,4 +12,4 @@ pipeline:
         headers:
           Content-Type: application/json
     - bloblang: |
-        content = "Remember boys!\n" + this.contents.quotes.0.quote + " -- " + "_" + this.contents.quotes.0.author + "_"
+        content = "Remember boys!\n" + this.contents.quotes.0.quote + "\n-- " + "_" + this.contents.quotes.0.author + "_"
