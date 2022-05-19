@@ -1,0 +1,4 @@
+# This exists for overriding default benthos.yaml in dockerfile
+
+logger:
+  level: info
