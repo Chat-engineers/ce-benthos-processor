@@ -9,6 +9,7 @@ pipeline:
     - http:
         url: https://quotes.rest/qod
         verb: GET
+        timeout: 30s
         headers:
           Content-Type: application/json
     - bloblang: |
