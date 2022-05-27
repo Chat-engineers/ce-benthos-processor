@@ -1,5 +1,7 @@
 input:
-  resource: daily_morning
+  generate:
+    mapping: root = {}
+    interval: TZ=Europe/Athens 0 11 * * *
 
 output:
   resource: discord_notifications
@@ -9,7 +11,11 @@ pipeline:
     - http:
         url: https://quotes.rest/qod
         verb: GET
+        timeout: 1m
         headers:
           Content-Type: application/json
     - bloblang: |
         content = "Remember boys!\n" + this.contents.quotes.0.quote + "\n-- " + "_" + this.contents.quotes.0.author + "_"
+    - catch:
+        - bloblang: |
+            content = "Sorry boys... I got period cramps today. Catch you tomorrow same time! :kiss:"
