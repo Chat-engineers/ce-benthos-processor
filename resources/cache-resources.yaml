@@ -1,0 +1,4 @@
+cache_resources:
+  - label: "ph_feed"
+    file:
+      directory: ".cache/ph_feed"

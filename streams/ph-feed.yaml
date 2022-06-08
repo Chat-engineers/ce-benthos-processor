@@ -1,0 +1,27 @@
+input:
+  generate:
+    mapping: root = {}
+    interval: 5s
+
+output:
+  stdout: {}
+
+pipeline:
+  processors:
+    - http:
+        url: https://www.producthunt.com/feed
+        verb: GET
+    - xml:
+        operator: "to_json"
+    - bloblang: |
+        updated = this.feed.updated
+        entries = this.feed.entry.map_each(e -> {
+          "id": e.id,
+          "title": e.title,
+          "link": e.link."-href",
+        }).slice(0,5)
+    - cache:
+        resource: ph_feed
+        operator: add
+        key: last_updated
+        value: ${! json("updated")}
