@@ -1,0 +1,21 @@
+input:
+  generate:
+    mapping: root = {}
+    interval: TZ=Europe/Athens 0 16 * * *
+
+output:
+  resource: discord_notifications
+
+pipeline:
+  processors:
+    - http:
+        url: https://www.producthunt.com/feed
+        verb: GET
+    - xml:
+        operator: "to_json"
+    - bloblang: |
+        let e = this.feed.entry.0
+        root.content = "Hello boys! :kiss: This is today's trending product at Product Hunt :point_down:\n" + $e.title + " :point_right: " + $e.link."-href"
+    - catch:
+        - bloblang: |
+            content = "Sorry boys... I got period cramps today. Catch you tomorrow same time! :kiss:"
